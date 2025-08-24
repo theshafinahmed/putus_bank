@@ -14,7 +14,7 @@ public class Cli {
 
     public void run() {
         while (true) {
-            System.out.println("\nWelcome to PutusBank CLI");
+            System.out.println("\nWelcome to NextGenBank CLI");
             System.out.println("1. Create Account");
             System.out.println("2. Login");
             System.out.println("3. Admin Login");
@@ -33,7 +33,7 @@ public class Cli {
                     adminLogin();
                     break;
                 case "4":
-                    System.out.println("Thank you for using PutusBank. Goodbye!");
+                    System.out.println("Thank you for using NextGenBank. Goodbye!");
                     bank.saveAccounts();
                     return;
                 default:
