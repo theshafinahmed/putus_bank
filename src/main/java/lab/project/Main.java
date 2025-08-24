@@ -8,10 +8,11 @@ public class Main {
 
     public static void main(String[] args) {
         while (true) {
-            System.out.println("\nWelcome to TinyBank CLI");
+            System.out.println("\nWelcome to PutusBank CLI");
             System.out.println("1. Create Account");
             System.out.println("2. Login");
-            System.out.println("3. Exit");
+            System.out.println("3. Admin Login");
+            System.out.println("4. Exit");
             System.out.print("Choose an option: ");
             String choice = scanner.nextLine();
 
@@ -23,7 +24,10 @@ public class Main {
                     login();
                     break;
                 case "3":
-                    System.out.println("Thank you for using TinyBank. Goodbye!");
+                    adminLogin();
+                    break;
+                case "4":
+                    System.out.println("Thank you for using PutusBank. Goodbye!");
                     bank.saveAccounts();
                     return;
                 default:
@@ -37,7 +41,6 @@ public class Main {
         String name = scanner.nextLine();
         System.out.print("Create a 4-digit PIN: ");
         String pin = scanner.nextLine();
-        // Basic validation for PIN
         if (!pin.matches("\\d{4}")) {
             System.out.println("Invalid PIN format. Please enter a 4-digit number.");
             return;
@@ -49,7 +52,6 @@ public class Main {
         } catch (NumberFormatException e) {
             System.out.println("Invalid amount. Defaulting to 0.");
         }
-
 
         Account account = bank.createAccount(name, pin, balance);
         System.out.println("Account created successfully!");
@@ -64,7 +66,6 @@ public class Main {
 
         Account account = bank.login(accNumber, pin);
         if (account != null) {
-            System.out.println("\nLogin successful! Welcome, " + account.getName());
             loggedInMenu(account);
         } else {
             System.out.println("Invalid account number or PIN.");
@@ -97,6 +98,7 @@ public class Main {
                     transfer(account);
                     break;
                 case "5":
+                    System.out.println("--- Transaction History ---");
                     account.getTransactionHistory().forEach(System.out::println);
                     break;
                 case "6":
@@ -135,7 +137,7 @@ public class Main {
     }
 
     public static void transfer(Account account) {
-        System.out.print("Enter recipient\'s account number: ");
+        System.out.print("Enter recipient's account number: ");
         String toAccNumber = scanner.nextLine();
         System.out.print("Enter amount to transfer: ");
         try {
@@ -147,6 +149,42 @@ public class Main {
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid amount.");
+        }
+    }
+
+    public static void adminLogin() {
+        System.out.print("Enter admin username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter admin password: ");
+        String password = scanner.nextLine();
+
+        if ("admin".equals(username) && "admin123".equals(password)) {
+            adminMenu();
+        } else {
+            System.out.println("Invalid admin credentials.");
+        }
+    }
+
+    public static void adminMenu() {
+        while (true) {
+            System.out.println("\n--- Admin Menu ---");
+            System.out.println("1. List All Accounts");
+            System.out.println("2. Logout");
+            System.out.print("Choose an option: ");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    System.out.println("--- All Bank Accounts ---");
+                    bank.getAllAccounts().forEach(acc -> {
+                        System.out.println("Name: " + acc.getName() + ", Account Number: " + acc.getAccountNumber() + ", Balance: " + acc.getBalance());
+                    });
+                    break;
+                case "2":
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+            }
         }
     }
 }

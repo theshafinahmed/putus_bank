@@ -74,4 +74,8 @@ public class Bank {
         }
         return false;
     }
+
+    public List<Account> getAllAccounts() {
+        return accounts;
+    }
 }
