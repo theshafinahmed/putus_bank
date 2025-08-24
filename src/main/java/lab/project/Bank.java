@@ -3,6 +3,7 @@ package lab.project;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Bank {
     private List<Account> accounts;
@@ -24,7 +25,6 @@ public class Bank {
         }
     }
 
-
     public void saveAccounts() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
             oos.writeObject(accounts);
@@ -33,12 +33,51 @@ public class Bank {
         }
     }
 
-    public Account createAccount(String name, String pin, double initialBalance) {
+    public Account createAccount(String name, String pin, double initialBalance, String accountType, int termMonths, double monthlyInstallment) {
         String accountNumber = String.valueOf(1000 + accounts.size());
-        Account newAccount = new Account(accountNumber, name, pin, initialBalance);
+        Account newAccount = null;
+        switch (accountType.toLowerCase()) {
+            case "savings":
+                newAccount = new SavingsAccount(accountNumber, name, pin, initialBalance);
+                break;
+            case "current":
+                newAccount = new CurrentAccount(accountNumber, name, pin, initialBalance);
+                break;
+            case "dps":
+                newAccount = new DpsAccount(accountNumber, name, pin, initialBalance, monthlyInstallment);
+                break;
+            case "fixeddeposit":
+                newAccount = new FixedDepositAccount(accountNumber, name, pin, initialBalance, termMonths);
+                break;
+            default:
+                return null;
+        }
         accounts.add(newAccount);
         saveAccounts();
         return newAccount;
+    }
+
+    public boolean deleteAccount(String accountNumber) {
+        Account account = findAccount(accountNumber);
+        if (account != null) {
+            accounts.remove(account);
+            saveAccounts();
+            return true;
+        }
+        return false;
+    }
+
+    public List<Account> searchAccounts(String query) {
+        return accounts.stream()
+                .filter(acc -> acc.getName().toLowerCase().contains(query.toLowerCase()) || acc.getAccountNumber().equals(query))
+                .collect(Collectors.toList());
+    }
+
+    public void applyInterestToAllAccounts() {
+        for (Account account : accounts) {
+            account.applyInterest();
+        }
+        saveAccounts();
     }
 
     public Account findAccount(String accountNumber) {

@@ -4,14 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Account implements Serializable {
+public abstract class Account implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String accountNumber;
-    private String name;
-    private String pin;
-    private double balance;
-    private List<String> transactionHistory;
+    protected String accountNumber;
+    protected String name;
+    protected String pin;
+    protected double balance;
+    protected List<String> transactionHistory;
 
     public Account(String accountNumber, String name, String pin, double initialBalance) {
         this.accountNumber = accountNumber;
@@ -21,6 +21,9 @@ public class Account implements Serializable {
         this.transactionHistory = new ArrayList<>();
         addTransaction("Account created with initial balance: " + initialBalance);
     }
+
+    public abstract String getAccountType();
+    public abstract void applyInterest();
 
     public String getAccountNumber() {
         return accountNumber;
@@ -32,6 +35,10 @@ public class Account implements Serializable {
 
     public boolean validatePin(String pin) {
         return this.pin.equals(pin);
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 
     public double getBalance() {
@@ -58,7 +65,7 @@ public class Account implements Serializable {
         return false;
     }
 
-    private void addTransaction(String transaction) {
+    protected final void addTransaction(String transaction) {
         this.transactionHistory.add(transaction);
     }
 
